@@ -1,0 +1,136 @@
+/* @import url('https://fonts.googleapis.com/css?family=Acme'); */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+body {
+    background-color: #f2f2f2;
+    padding-top: 100px;
+}
+
+.title {
+    color: black;
+    letter-spacing: 1px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 30px;
+    text-align: center;
+    padding-top: 70px;
+}
+
+.book-search {
+    width: 60%;
+    margin: 0 auto;
+    vertical-align: center;
+}
+
+.searchBox {
+    font-size: 0;
+}
+
+.searchTerm {
+    display: inline;
+    margin: 0 auto;
+    width: 94%;
+    height: 50px;
+    padding: 0 20px;
+    font-size: 1rem;
+    outline: none;
+
+    border: 1px solid #00B4CC;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+}
+
+.searchTerm:focus {
+    transition: 0.55s ease;
+    border: 2px solid rgba(234, 88, 100, 0.78);
+}
+
+.searchBtn {
+    display: inline;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #00B4CC;
+    background:  #00B4CC;
+    color: #fff;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+input[type=image] {
+    display: inline;
+    position: relative;
+    float: right;
+    width: 50px;
+    height: 50px;
+    outline: none;
+    border: 1px solid #00B4CC;
+    border-radius: 0 5px 5px 0;
+}
+
+
+
+
+
+/*
+    checkBox
+*/
+.searchCondition {
+    padding-top: 10px;
+}
+
+label {
+    color: black;
+    align-items: center;
+    display: inline-block;
+    vertical-align: center;
+}
+
+label.titleLabel {
+    font-size: 22px;
+    text-align: center;
+}
+
+input[type=checkbox] + label {
+    margin: 0.5em;
+    cursor: pointer;
+    padding: 0.2em;
+}
+  
+input[type=checkbox] {
+    display: none;
+}
+  
+input[type=checkbox] + label:before {
+    content: "\2714";
+    border: 0.1em solid #000;
+    border-radius: 0.2em;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    padding-left: 0.2em;
+    padding-bottom: 0.3em;
+    margin-right: 0.2em;
+    vertical-align: bottom;
+    color: transparent;
+    transition: .2s;
+}
+  
+input[type=checkbox] + label:active:before {
+    transform: scale(0);
+}
+  
+input[type=checkbox]:checked + label:before {
+    background-color: MediumSeaGreen;
+    border-color: MediumSeaGreen;
+    color: #fff;
+}
+  
+input[type=checkbox]:disabled + label:before {
+    transform: scale(1);
+    border-color: #aaa;
+}
+  
+input[type=checkbox]:checked:disabled + label:before {
+    transform: scale(1);
+    background-color: #bfb;
+    border-color: #bfb;
+}  

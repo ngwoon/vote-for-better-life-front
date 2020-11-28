@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="public/css/index.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div class="title">
+          <h1>Vote for Better Life!</h1>
+        </div>
+        <form action="javascript:void(0)" method="GET"name="AquaForm" class="book-search">
+        
+            <div class="searchBox">
+                <input type="text" placeholder="ex) 국회의원선거, 교육감선거 ..." name="term" class="searchTerm" />
+                <button class="searchBtn">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+
+            <div class="searchCondition">
+                <label class="titleLabel">검색 범주</label>
+                <input type="checkbox" id="range1" class="js-checkbox">
+                <label for="range1">선거명</label>
+                <input type="checkbox" id="range2" class="js-checkbox">
+                <label for="range2">후보자명</label>
+                <input type="checkbox" id="range3" class="js-checkbox">
+                <label for="range3">지역명</label>
+            </div>
+
+        </form>
+    </body>
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
+    <script src="public/javascripts/index.js"></script>
+</html>
