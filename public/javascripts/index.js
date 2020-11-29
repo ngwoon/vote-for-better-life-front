@@ -89,20 +89,6 @@ function showResults(data) {
 function onFormSubmitted(event) {
     event.preventDefault();
 
-    // const temp = [{
-    //     SG_NAME: "교육감 선거",
-    //     SG_TYPECODE: 11,
-    //     SG_VOTEDATE: "20200415",
-    //     SG_ID: "20200415",
-    // }, {
-    //     SG_NAME: "국회의원 선거",
-    //     SG_TYPECODE: 2,
-    //     SG_VOTEDATE: "20190415",
-    //     SG_ID: "20190415",
-    // }];
-
-    // showResults(temp);
-
     const checkBoxes = document.getElementsByClassName("js-checkbox");
 
     let searchRangeStat = 0;
@@ -125,7 +111,14 @@ function onFormSubmitted(event) {
             type,
             dataType: "json",
             success: (data) => {
-                showResults(data);
+                const body = JSON.parse(data.body);
+                console.log(body);
+
+                if(body.resultCode === "200") {
+                    showResults(body.item);
+                } else {
+                    alert("서버의 에러 응답");
+                }
             },
             error: (xhr, status, error) => {
                 alert("실패 응답");
