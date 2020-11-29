@@ -104,7 +104,7 @@ function onFormSubmitted(event) {
     if(searchRangeStat === 0)
         alert("하나 이상의 범주를 선택하세요");
     else {
-        const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test/search?searchRangeStat="+searchRangeStat+"&searchTerm="+searchTerm;
+        const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/search?searchTerm="+searchTerm+"&searchRangeStat="+searchRangeStat;
         const type = "GET";
         $.ajax({
             url,
@@ -112,7 +112,6 @@ function onFormSubmitted(event) {
             dataType: "json",
             success: (data) => {
                 const body = JSON.parse(data.body);
-                console.log(body);
 
                 if(body.resultCode === "200") {
                     showResults(body.item);
@@ -123,6 +122,7 @@ function onFormSubmitted(event) {
             error: (xhr, status, error) => {
                 alert("실패 응답");
                 alert(status);
+                console.log(error);
             },
         });
     }
@@ -133,7 +133,7 @@ function init() {
     const form = document.querySelector(".js-searchForm");
     form.addEventListener("submit", onFormSubmitted);
 
-    
+
 }
 
 init();

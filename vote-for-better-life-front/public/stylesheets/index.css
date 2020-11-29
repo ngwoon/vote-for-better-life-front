@@ -1,7 +1,7 @@
 /* @import url('https://fonts.googleapis.com/css?family=Acme'); */
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
-body {
+/* body {
     background-color: #f2f2f2;
     padding-top: 80px;
 }
@@ -12,8 +12,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-size: 30px;
     text-align: center;
-    /* padding-top: 70px; */
-}
+} */
 
 .book-search {
     width: 60%;

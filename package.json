@@ -1,0 +1,25 @@
+{
+  "name": "vote-for-better-life-front",
+  "version": "1.0.0",
+  "description": "클라우드웹서비스 기말 프로젝트",
+  "main": "index.js",
+  "dependencies": {
+    "express-generator": "^4.16.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngwoon/vote-for-better-life-front.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngwoon/vote-for-better-life-front/issues"
+  },
+  "homepage": "https://github.com/ngwoon/vote-for-better-life-front#readme"
+}

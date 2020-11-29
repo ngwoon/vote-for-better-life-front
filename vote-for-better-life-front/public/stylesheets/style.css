@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding-top: 80px;
 }
 
-a {
-  color: #00B7FF;
+.title {
+    color: black;
+    letter-spacing: 1px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 30px;
+    text-align: center;
+    /* padding-top: 70px; */
 }
