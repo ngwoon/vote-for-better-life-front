@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/index.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div class="title">
+          <h1>Vote for Better Life!</h1>
+        </div>
+        <div class="book-search">
+            <form action="#" method="GET" class="js-searchForm">
+            
+                <div class="searchBox">
+                    <input type="text" placeholder="ex) 국회의원선거, 교육감선거 ..." name="term" class="searchTerm js-searchTerm" />
+                    <button type="submit" class="searchBtn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+
+                <div class="searchCondition">
+                    <label class="titleLabel">검색 범주</label>
+                    <input type="checkbox" id="election" class="js-checkbox">
+                    <label for="election">선거명</label>
+                    <input type="checkbox" id="candidator" class="js-checkbox">
+                    <label for="candidator">후보자명</label>
+                </div>
+
+            </form>
+
+            <hr>
+
+            <div id="item-list" class="js-searchResults">
+                <ul>
+                    <!-- <li>
+                        <a class="expand">
+                        <div class="right-arrow">+</div>
+                        <div class="icon default"></div>
+                        <h2>London</h2>
+                        <span>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy</span>
+                        </a>
+                        <div class="detail">
+                            <div><span>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</span></div><br/>
+                            
+                            <span class="button">Connect</span>
+                        </div>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/javascripts/index.js"></script>
+</html>
