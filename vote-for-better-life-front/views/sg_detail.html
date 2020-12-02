@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
         <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
         <link rel="stylesheet" type="text/css" href="/stylesheets/sg_detail.css" />
     </head>
@@ -9,7 +10,7 @@
             <h1>Vote for Better Life!</h1>
         </div>
         <div class="container">
-            <div class="inner-container">
+            <div class="innerContainer">
                 <h2 class="js-electionTitle">선거명</h2>
                 <div><span class="js-sgName"></span></div>
                 <br>
@@ -23,8 +24,38 @@
                 <br>
 
                 <h2>투표소 정보</h2>
-                <div></div>
-                <div class="map"></div>
+                <div class="mapContainer">
+                    <div class="mapMenu">
+                        <select class="js-placeTypeSBox" data-selected="">
+                            <option value="0" selected="selected">선거일 투표소</option>
+                            <option value="1">사전 투표소</option>
+                        </select>
+
+                        <select class="js-areaSBox" data-selected="">
+                            <option value="0" selected="selected">서울특별시</option>
+                            <option value="1">부산광역시</option>
+                            <option value="2">대구광역시</option>
+                            <option value="3">인천광역시</option>
+                            <option value="4">광주광역시</option>
+                            <option value="5">대전광역시</option>
+                            <option value="6">울산광역시</option>
+                            <option value="7">세종특별자치시</option>
+                            <option value="8">경기도</option>
+                            <option value="9">강원도</option>
+                            <option value="10">충청북도</option>
+                            <option value="11">충청남도</option>
+                            <option value="12">전라북도</option>
+                            <option value="13">전라남도</option>
+                            <option value="14">경상북도</option>
+                            <option value="15">경상남도</option>
+                            <option value="16">제주특별자치도</option>
+                        </select>
+
+                        <button class="js-applyBtn">적용</button>
+                    </div>
+
+                    <div class="map"></div>
+                </div>
             </div>
         </div>
     </body>
