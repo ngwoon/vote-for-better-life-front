@@ -2,14 +2,33 @@
     <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+        <link rel="stylesheet" type="text/css" href="/stylesheets/sg_detail.css" />
     </head>
     <body>
         <div class="title">
             <h1>Vote for Better Life!</h1>
         </div>
-        <h2 class="js-electionTitle">선거명</h2>
-        <br>
-        <h3>선거 이름</h3>
-        <div><span>국회의원선거</span></div>
+        <div class="container">
+            <div class="inner-container">
+                <h2 class="js-electionTitle">선거명</h2>
+                <div><span class="js-sgName"></span></div>
+                <br>
+                
+                <h2>선거 종류</h2>
+                <div><span class="js-sgType"></span></div>
+                <br>
+
+                <h2>선거 일자</h2>
+                <div><span class="js-sgVoteDate"></span></div>
+                <br>
+
+                <h2>투표소 정보</h2>
+                <div></div>
+                <div class="map"></div>
+            </div>
+        </div>
     </body>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=2c9947bccbc684eaf2f500c5e9e2a121&libraries=services,clusterer"></script>
+    <script src="/javascripts/sg_detail.js"></script>
 </html>

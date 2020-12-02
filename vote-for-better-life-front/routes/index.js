@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get("/election-detail", (req, res, next) => {
+router.get("/election/:sgId/:sgTypecode", (req, res, next) => {
     fs.readFile(__dirname + "/../views/sg_detail.html", "utf8", (error, data) => {
         if(error) {
             console.log("index 파일 읽기 오류");

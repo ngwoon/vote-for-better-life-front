@@ -1,9 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
-body {
-    background-color: #f2f2f2;
-    padding-top: 80px;
-}
+
 
 .title {
     color: black;
@@ -11,5 +8,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     font-size: 30px;
     text-align: center;
-    /* padding-top: 70px; */
+    padding-top: 70px;
 }
+
+
