@@ -4,21 +4,32 @@ const sdNames = ["서울특별시", "부산광역시", "대구광역시", "인�
 const sdToMarkers = [{}, {}];
 let votePlaces = [{}, {}];
 let clusterer, map;
+let loadingInterval = null, count = 0;
+let currentPlaceType = 0, currentSdName = "서울특별시";
 
+function getMapBounds(positions) {
+    const newBounds = new kakao.maps.LatLngBounds();
+
+    for(position of positions)
+        newBounds.extend(new kakao.maps.LatLng(position.lat, position.lng));
+
+    return newBounds;
+}
 
 async function makePingOnMap(placeType, sdName) {
     
+    if(loadingInterval === null)
+        loadingInfoStart();
+
     let markers = null;
-    let center = null;
+    let bounds = null;
     clusterer.clear();
 
     if(sdToMarkers[placeType][sdName] !== undefined) {
         markers = sdToMarkers[placeType][sdName].markers;
-        center = sdToMarkers[placeType][sdName].center;
+        bounds = sdToMarkers[placeType][sdName].bounds;
     }
     else {
-        // const geocoder = new kakao.maps.services.Geocoder();
-
         // 클러스터러 표현 위한 좌표 데이터 배열
         const data = {
             "positions": [],
@@ -29,7 +40,7 @@ async function makePingOnMap(placeType, sdName) {
                 continue;
             
             data.positions.push({
-                "lat": +place.LAT, 
+                "lat": +place.LAT,
                 "lng": +place.LNG, 
                 "infowindow": new kakao.maps.InfoWindow({
                     content: `<div class="placeInfo">${place.PLACE_NAME}</div>`,
@@ -37,47 +48,8 @@ async function makePingOnMap(placeType, sdName) {
                 }),
             });
         }
-        
-
-        // // 모든 addressSearch 비동기 처리 후 마커 생성 위한 배열 
-        // const addrSearchPromises = [];
-
-        // // 선거일 투표소 정보
-        // for(let votePlace of votePlaces[placeType][sdName]) {
-        //     const parsedAddr = votePlace.ADDR.split('(');
-        //     addrSearchPromises.push(new Promise((resolve, reject) => {
-        //         geocoder.addressSearch(parsedAddr[0], function(result, status) {
-
-        //             // 정상적으로 검색이 완료됐으면 
-        //             if (status === kakao.maps.services.Status.OK) {
-
-        //                 data.positions.push({
-        //                     "lat": result[0].y, 
-        //                     "lng": result[0].x, 
-        //                     "infowindow": new kakao.maps.InfoWindow({
-        //                         content: `<div class="placeInfo">${votePlace.PLACE_NAME}</div>`,
-        //                         position: new kakao.maps.LatLng(result[0].y, result[0].x),
-        //                     }),
-        //                 });
-
-        //                 resolve();
-
-        //             } else {
-        //                 // console.log(`검색 실패 주소 = ${parsedAddr[0]}`);
-        //                 reject();
-        //             }
-        //         });
-        //     }));
-        // }
-
-        // await Promise.allSettled(addrSearchPromises);
-
-        let latAvg = 0;
-        let lngAvg = 0;
 
         markers = data.positions.map(function(position) {
-            latAvg += +position.lat;
-            lngAvg += +position.lng;
             
             const marker = new kakao.maps.Marker({
                 position: new kakao.maps.LatLng(position.lat, position.lng),
@@ -95,19 +67,26 @@ async function makePingOnMap(placeType, sdName) {
             return marker;
         });
 
-        latAvg /= data.positions.length;
-        lngAvg /= data.positions.length;
-
-        center = {"lat": latAvg, "lng": lngAvg};
-
         sdToMarkers[placeType][sdName] = {};
         sdToMarkers[placeType][sdName].markers = markers;
-        sdToMarkers[placeType][sdName].center = center;
+
+        bounds = getMapBounds(data.positions); 
+        sdToMarkers[placeType][sdName].bounds = bounds;
     }
 
-    map.panTo(new kakao.maps.LatLng(center.lat, center.lng)); //지도 이동
+    // 맵 범위 조정
+    map.setBounds(bounds);
+
+    // map.panTo(new kakao.maps.LatLng(center.lat, center.lng)); //지도 이동
     clusterer.addMarkers(markers); // 지도 마커 변경
-    map.setLevel(MAP_LEVEL); // 지도 레벨 변경
+
+    // 현재 지도 상태 정보 갱신
+    currentPlaceType = placeType;
+    currentSdName = sdName;
+
+    // 로딩 인터벌 종료
+    if(loadingInterval !== null)
+        loadingInfoEnd();
 }
 
 function showInfo(sgInfo) {
@@ -129,6 +108,9 @@ function apiRequest(sgId, sgTypecode, sdName) {
     const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/election/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sgTypecode)+"/"+encodeURIComponent(sdName);
     const type = "GET";
 
+    if(loadingInterval === null)
+        loadingInfoStart();
+
     $.ajax({
         url,
         type,
@@ -138,6 +120,7 @@ function apiRequest(sgId, sgTypecode, sdName) {
             if(body.resultCode === "00") {
                 votePlaces[0][sdName] = body.item.votePlaces;
                 votePlaces[1][sdName] = body.item.preVotePlaces;
+
                 showInfo(body.item.sgInfo[0]);
                 makePingOnMap(0, sdName);
             } else {
@@ -157,6 +140,34 @@ function judge(sgId, sgTypecode, sdName, placeType) {
         apiRequest(sgId, sgTypecode, sdName);
     else
         makePingOnMap(placeType, sdName);
+}
+
+function loadingInfoStart() {
+    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+    
+    console.log("로딩 인터벌 시작");
+    loadingInfoSpan.style.display = "block";
+    count = 0;
+    loadingInterval = setInterval(() => {
+        ++count;
+        if(count < 4)
+            loadingInfoSpan.innerText += ".";
+        else {
+            count = 0;
+            loadingInfoSpan.innerText = loadingInfoSpan.innerText.slice(0, -3);
+        }
+    }, 500);
+}
+
+function loadingInfoEnd() {
+    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+
+    console.log("로딩 인터벌 종료");
+
+    clearInterval(loadingInterval);
+    loadingInterval = null;
+    loadingInfoSpan.innerText = "지도를 로딩하고 있습니다.";
+    loadingInfoSpan.style.display = "none";
 }
 
 function init() {
@@ -180,8 +191,11 @@ function init() {
     const sgId = parsedUrl[4];
     const sgTypecode = parsedUrl[5];
 
+    console.log("api request 직전");
     // API 요청
     apiRequest(sgId, sgTypecode, "서울특별시");
+
+    console.log("api request 직후");
 
     // 적용 버튼 리스너
     const applyBtn = document.querySelector(".js-applyBtn")
@@ -193,6 +207,11 @@ function init() {
         
         const sdName = sdNames[areaSBox.value];
         const placeType = placeTypeSBox.value;
+
+        if(currentPlaceType === placeType && currentSdName === sdName)
+            return;
+        if(loadingInterval !== null)
+            return;
 
         console.log("투표소 타입 = " + placeType + ", 지역 = ", sdName);
         judge(sgId, sgTypecode, sdName, placeType);
