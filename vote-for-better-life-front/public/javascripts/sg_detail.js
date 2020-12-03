@@ -7,6 +7,8 @@ let clusterer, map;
 let loadingInterval = null, count = 0;
 let currentPlaceType = 0, currentSdName = "서울특별시";
 
+let candidators = {};
+
 function getMapBounds(positions) {
     const newBounds = new kakao.maps.LatLngBounds();
 
@@ -17,9 +19,6 @@ function getMapBounds(positions) {
 }
 
 async function makePingOnMap(placeType, sdName) {
-    
-    if(loadingInterval === null)
-        loadingInfoStart();
 
     let markers = null;
     let bounds = null;
@@ -89,7 +88,7 @@ async function makePingOnMap(placeType, sdName) {
         loadingInfoEnd();
 }
 
-function showInfo(sgInfo) {
+function showSgInfo(sgInfo) {
     // 선거명
     const sgNameSpan = document.querySelector(".js-sgName");
     sgNameSpan.innerText = sgInfo.SG_NAME;
@@ -104,12 +103,78 @@ function showInfo(sgInfo) {
     sgVoteDate.innerText = voteDate;
 }
 
-function apiRequest(sgId, sgTypecode, sdName) {
-    const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/election/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sgTypecode)+"/"+encodeURIComponent(sdName);
-    const type = "GET";
+function classifyCandidators(uCandidators) {
+    const temp = {};
+    
+    for(let candidator of uCandidators) {
+        if(temp[candidator.JD_NAME] === undefined)
+            temp[candidator.JD_NAME] = [];
+        temp[candidator.JD_NAME].push(candidator);
+    }
 
+    const jdNames = Object.keys(temp).sort();
+
+    for(let jdName of jdNames)
+        candidators[jdName] = temp[jdName];
+
+    console.log("후보자 정보 가공 완료");
+}
+
+// 선거에 참여한 후보자들을 정당 기준으로 화면에 나열하는 함수 
+function showCandNames() {
+    const listDiv = document.querySelector(".js-candidatorList");
+    listDiv.style.display = "none";
+
+    console.log(candidators);
+
+    console.log("후보자 정보 화면띄우기 시작");
+    for(let jdName of Object.keys(candidators)) {
+        const jdNameHeader = document.createElement("h3");
+        jdNameHeader.innerText = jdName;
+        listDiv.append(jdNameHeader);
+
+        const ONE_LINE_LIMIT = 10;
+        let count = 0;
+        let table = document.createElement("table");
+        let tr = document.createElement("tr");
+        for(let candidator of candidators[jdName]){
+            console.log("후보자명 = ", candidator.NAME);
+
+            const td = document.createElement("td");
+            const cNameSpan = document.createElement("span");
+            cNameSpan.innerText = candidator.NAME;
+            cNameSpan.classList.add("clickable");
+
+            td.append(cNameSpan);
+            tr.append(td);
+            ++count;
+
+            if(count === ONE_LINE_LIMIT) {
+                count = 0;
+                table.append(tr);
+                tr = document.createElement("tr");
+            }
+        }
+
+        if(count !== 0)
+            table.append(tr);
+
+        listDiv.append(table);
+        listDiv.append(document.createElement("br"));
+    }
+
+    listDiv.style.display = "block";
+    console.log("후보자 정보 화면띄우기 종료");
+}
+
+function sgApiRequest(sgId, sgTypecode, sdName) {
+    
+    // 맨 처음 화면 로딩 시 안내 문구 띄워주기 위해 선언
     if(loadingInterval === null)
         loadingInfoStart();
+
+    const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/election/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sgTypecode)+"/"+encodeURIComponent(sdName);
+    const type = "GET";
 
     $.ajax({
         url,
@@ -121,25 +186,68 @@ function apiRequest(sgId, sgTypecode, sdName) {
                 votePlaces[0][sdName] = body.item.votePlaces;
                 votePlaces[1][sdName] = body.item.preVotePlaces;
 
-                showInfo(body.item.sgInfo[0]);
+                showSgInfo(body.item.sgInfo[0]);
                 makePingOnMap(0, sdName);
             } else {
-                alert("서버의 에러 응답");
+                alert("선거, 투표소 정보를 불러오는데 실패했습니다.");
             }
         },
         error: (xhr, status, error) => {
-            alert("실패 응답");
+            alert("비동기 요청 실패 : sg, place");
             alert(status);
             console.log(error);
         },
     });
 }
 
+function candApiRequest(sgId, sgTypecode) {
+    const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/candidators/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sgTypecode);
+    const type = "GET";
+
+    $.ajax({
+        url,
+        type,
+        dataType: "json",
+        success: (data) => {
+            const body = JSON.parse(data.body);
+            if(body.resultCode === "00") {
+                classifyCandidators(body.item.candidators);
+                showCandNames();
+            } else {
+                alert("후보자 정보를 불러오는데 실패했습니다.");
+            }
+        },
+        error: (xhr, status, error) => {
+            alert("비동기 요청 실패 : cand");
+            alert(status);
+            console.log(error);
+        },
+    });
+}
+
+// 지도 적용 버튼 클릭 시 API 요청, 혹은 이미 저장된 데이터를 사용할건지 분기하는 함수 
 function judge(sgId, sgTypecode, sdName, placeType) {
+    
+    // 버튼 클릭했을 때 로딩 안내 문구 띄우기
+    loadingInfoStart();
+
     if(votePlaces[0][sdName] === undefined)
-        apiRequest(sgId, sgTypecode, sdName);
+        sgApiRequest(sgId, sgTypecode, sdName);
     else
         makePingOnMap(placeType, sdName);
+}
+
+
+function changeLoadingInfo() {
+    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+
+    ++count;
+    if(count < 4)
+        loadingInfoSpan.innerText += ".";
+    else {
+        count = 0;
+        loadingInfoSpan.innerText = loadingInfoSpan.innerText.slice(0, -3);
+    }
 }
 
 function loadingInfoStart() {
@@ -148,15 +256,9 @@ function loadingInfoStart() {
     console.log("로딩 인터벌 시작");
     loadingInfoSpan.style.display = "block";
     count = 0;
-    loadingInterval = setInterval(() => {
-        ++count;
-        if(count < 4)
-            loadingInfoSpan.innerText += ".";
-        else {
-            count = 0;
-            loadingInfoSpan.innerText = loadingInfoSpan.innerText.slice(0, -3);
-        }
-    }, 500);
+    
+    changeLoadingInfo();
+    loadingInterval = setInterval(changeLoadingInfo, 500);
 }
 
 function loadingInfoEnd() {
@@ -191,11 +293,11 @@ function init() {
     const sgId = parsedUrl[4];
     const sgTypecode = parsedUrl[5];
 
-    console.log("api request 직전");
-    // API 요청
-    apiRequest(sgId, sgTypecode, "서울특별시");
+    // 투표소 정보 API 요청
+    sgApiRequest(sgId, sgTypecode, "서울특별시");
 
-    console.log("api request 직후");
+    // 후보자 정보 API 요청
+    candApiRequest(sgId, sgTypecode);
 
     // 적용 버튼 리스너
     const applyBtn = document.querySelector(".js-applyBtn")
