@@ -17,7 +17,7 @@ async function makePingOnMap(placeType, sdName) {
         center = sdToMarkers[placeType][sdName].center;
     }
     else {
-        const geocoder = new kakao.maps.services.Geocoder();
+        // const geocoder = new kakao.maps.services.Geocoder();
 
         // 클러스터러 표현 위한 좌표 데이터 배열
         const data = {
@@ -29,11 +29,11 @@ async function makePingOnMap(placeType, sdName) {
                 continue;
             
             data.positions.push({
-                "lat": place.LAT, 
-                "lng": place.LNG, 
+                "lat": +place.LAT, 
+                "lng": +place.LNG, 
                 "infowindow": new kakao.maps.InfoWindow({
                     content: `<div class="placeInfo">${place.PLACE_NAME}</div>`,
-                    position: new kakao.maps.LatLng(place.LAT, place.LNG),
+                    position: new kakao.maps.LatLng(+place.LAT, +place.LNG),
                 }),
             });
         }
