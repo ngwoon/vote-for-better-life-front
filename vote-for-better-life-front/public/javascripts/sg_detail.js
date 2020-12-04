@@ -9,6 +9,7 @@ let currentPlaceType = 0, currentSdName = "서울특별시";
 
 let candidators = {};
 
+
 function getMapBounds(positions) {
     const newBounds = new kakao.maps.LatLngBounds();
 
@@ -92,6 +93,10 @@ function makePingOnMap(placeType, sdName) {
     });
 }
 
+
+
+
+
 function showSgInfo(sgInfo) {
     // 선거명
     const sgNameSpan = document.querySelector(".js-sgName");
@@ -118,10 +123,224 @@ function classifyCandidators(uCandidators) {
 
     const jdNames = Object.keys(temp).sort();
 
+    // 정당별로 분류
     for(let jdName of jdNames)
         candidators[jdName] = temp[jdName];
 
     console.log("후보자 정보 가공 완료");
+}
+
+function onCandidatorNameClicked(candidator) {
+    const modal = document.querySelector(".js-modal");
+
+    const closeModal = document.querySelector(".js-closeModal");
+    closeModal.addEventListener("click", (event) => {
+        event.preventDefault();
+        modal.style.display = "none";
+    });
+
+    const modalBody = document.querySelector(".js-modalBody");
+    modalBody.innerHTML = "";
+
+    // 모달 내용 채우기
+    let h3 = document.createElement("h3");
+    h3.innerText = "이름";
+    modalBody.append(h3);
+
+    let content = document.createElement("p");
+    content.innerText = candidator["NAME"];
+    modalBody.append(content);
+
+    let br = document.createElement("br");
+    modalBody.append(br);
+    
+    
+    h3 = document.createElement("h3");
+    h3.innerText = "성별";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["GENDER"]+"성";
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "나이";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["AGE"] + "세";
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "주소";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["ADDR"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "직업";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["JOB"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "학력";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["EDU"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "선거구";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["SGG_NAME"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "시도 / 구시군";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["SD_NAME"] + " " + candidator["WIW_NAME"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "기호";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = "기호 " + candidator["GIHO"] + "번";
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "정당";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["JD_NAME"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "경력";
+    modalBody.append(h3);
+
+    for(career of candidator["CAREER"]) {
+        content = document.createElement("p");
+        content.innerText = career;
+        modalBody.append(content);
+    }
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    h3 = document.createElement("h3");
+    h3.innerText = "후보 상태";
+    modalBody.append(h3);
+
+    content = document.createElement("p");
+    content.innerText = candidator["STATUS"];
+    modalBody.append(content);
+
+    br = document.createElement("br");
+    modalBody.append(br);
+
+
+    
+
+    if(candidator["PRMS"].length > 0) {
+        h3 = document.createElement("h3");
+        h3.innerText = "공약";
+        modalBody.append(h3);
+
+        let idx = 1;
+        for(prm of candidators["PRMS"]) {
+            const prmIdx = document.createElement("div");
+            prmIdx.style = "font-size: 20px; font: bold;";
+            prmIdx.innerText = "공약 " + idx + ".";
+            ++idx;
+            modalBody.append(prmIdx);
+
+            
+            let prmTitle = document.createElement("div");
+            prmTitle.style = "fond-size: 15px; font: bold";
+            prmTitle.innerText = "공약분야";
+            modalBody.append(prmTitle);
+
+            let prmContent = document.createElement("p");
+            prmContent.innerText = prm["REALM"];
+            modalBody.append(prmContent);
+
+
+            prmTitle = document.createElement("div");
+            prmTitle.style = "fond-size: 15px; font: bold";
+            prmTitle.innerText = "공약제목";
+            modalBody.append(prmTitle);
+
+            prmContent = document.createElement("p");
+            prmContent.innerText = prm["TITLE"];
+            modalBody.append(prmContent);
+
+
+            prmTitle = document.createElement("div");
+            prmTitle.style = "fond-size: 15px; font: bold";
+            prmTitle.innerText = "공약내용";
+            modalBody.append(prmTitle);
+
+            prmContent = document.createElement("p");
+            prmContent.innerText = prm["CONTENT"];
+            modalBody.append(prmContent);
+        }
+       
+        br = document.createElement("br");
+        modalBody.append(br);
+    }
+
+    // 모달 창 띄우기
+    modal.style.display = "block";
 }
 
 // 선거에 참여한 후보자들을 정당 기준으로 화면에 나열하는 함수 
@@ -147,6 +366,13 @@ function showCandNames() {
             const td = document.createElement("td");
             const cNameSpan = document.createElement("span");
             cNameSpan.innerText = candidator.NAME;
+
+            //후보자 모달 창 리스너 등록
+            cNameSpan.addEventListener("click", (event) => {
+                event.preventDefault();
+                onCandidatorNameClicked(candidator);
+            });
+
             cNameSpan.classList.add("clickable");
 
             td.append(cNameSpan);
@@ -344,6 +570,9 @@ function init() {
         console.log("투표소 타입 = " + placeType + ", 지역 = ", sdName);
         judge(sgId, sgTypecode, sdName, placeType);
     });
+
+    
+
 }
 
 init();

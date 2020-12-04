@@ -6,16 +6,7 @@ body {
     /* padding-top: 80px; */
 }
 
-/*
-.title {
-    color: black;
-    letter-spacing: 1px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 30px;
-    text-align: center;
-} */
-
-.book-search {
+.search {
     width: 60%;
     margin: 0 auto;
     vertical-align: center;

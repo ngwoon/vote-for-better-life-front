@@ -3,6 +3,9 @@ $(function() {
     // 검색 결과 화면에 출력
     function showResults(data) {
 
+        if(data.length === 0)
+            alert("검색 결과가 없습니다.");
+
         sgTypes = ["보궐", "대통령", "국회의원", "시도지사", "구시군장", "시도의원", "구시군의회의원", "국회의원비례대표", "광역의원비례대표", "기초의원비례대표", "교육의원", "교육감", "전국동시지방"];
 
         const list = document.querySelector(".js-searchResults");
@@ -55,6 +58,10 @@ $(function() {
             const detailBtn = document.createElement("span");
             detailBtn.classList.add("button");
             detailBtn.innerText = "상세보기";
+            detailBtn.addEventListener("click", (event) => {
+                event.preventDefault();
+                location.href = `/election/${election.SG_ID}/${election.SG_TYPECODE}`;
+            });
             
             detailDiv.append(spanDiv);
             detailDiv.append(br);
@@ -72,7 +79,6 @@ $(function() {
         }
 
         if(data.length !== 0) {
-            
             $(".expand").on( "click", function() {
                 $(this).next().slideToggle(100);
                 $expand = $(this).find(">:first-child");
