@@ -11,17 +11,21 @@
         </div>
         <div class="container">
             <div class="innerContainer">
-                <h2 class="js-electionTitle">선거명</h2>
+                <span class="js-sgLoadingInfo">선거 데이터 로딩 중입니다.</span>
+
+                <h2>선거 정보</h2>
+
+                <h3 class="js-electionTitle">선거명</h3>
                 <div><span class="js-sgName"></span></div>
                 <br>
                 
-                <h2>선거 종류</h2>
+                <h3>선거 종류</h3>
                 <div><span class="js-sgType"></span></div>
                 <br>
 
-                <h2>선거 일자</h2>
+                <h3>선거 일자</h3>
                 <div><span class="js-sgVoteDate"></span></div>
-                <br>
+                <br><br>
 
                 <h2>투표소 정보</h2>
                 <div class="mapContainer">
@@ -53,14 +57,15 @@
 
                         <button class="js-applyBtn">적용</button>
 
-                        <span class="js-loadingInfo loadingInfo">지도를 로딩 중입니다.</span>
+                        <span class="js-mapLoadingInfo mapLoadingInfo">지도를 로딩 중입니다.</span>
                     </div>
 
                     <div class="map"></div>
                 </div>
-                <br>
+                <br><br>
 
-                <h2>후보자 목록</h2>
+                <h2 style="display: inline-block; margin-right: 20px;">후보자 목록</h2>
+                <span class="js-candLoadingInfo">후보자 목록을 로딩 중입니다.</span>
                 <div class="js-candidatorList"></div>
             </div>
         </div>

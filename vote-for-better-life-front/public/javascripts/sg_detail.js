@@ -4,7 +4,11 @@ const sdNames = ["서울특별시", "부산광역시", "대구광역시", "인�
 const sdToMarkers = [{}, {}];
 let votePlaces = [{}, {}];
 let clusterer, map;
-let loadingInterval = null, count = 0;
+let loadingInterval = {
+    sg: {interval: null, count: 0},
+    map: {interval: null, count: 0},
+    cand: {interval: null, count: 0},
+};
 let currentPlaceType = 0, currentSdName = "서울특별시";
 
 let candidators = {};
@@ -86,8 +90,8 @@ function makePingOnMap(placeType, sdName) {
         currentSdName = sdName;
     
         // 로딩 인터벌 종료
-        if(loadingInterval !== null)
-            loadingInfoEnd();
+        if(loadingInterval["map"].interval !== null)
+            endLoadingInterval();
 
         resolve();
     });
@@ -110,6 +114,8 @@ function showSgInfo(sgInfo) {
     const sgVoteDate = document.querySelector(".js-sgVoteDate");
     const voteDate = sgInfo.SG_VOTEDATE.slice(0, 4) + "년 " + sgInfo.SG_VOTEDATE.slice(4, 6) + "월 " + sgInfo.SG_VOTEDATE.slice(6, 8) + "일";
     sgVoteDate.innerText = voteDate;
+
+    endLoadingInterval("sg");
 }
 
 function classifyCandidators(uCandidators) {
@@ -394,10 +400,13 @@ function showCandNames() {
     }
 
     listDiv.style.display = "block";
+
+    // 인터벌 종료
+    endLoadingInterval("cand");
     console.log("후보자 정보 화면띄우기 종료");
 }
 
-function placeApiRequest(sgId, sgTypecode, sdName) {
+function placeApiRequest(sgId, sdName) {
 
     const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/deploy/vote-places/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sdName);
     const type = "GET";
@@ -478,50 +487,57 @@ function candApiRequest(sgId, sgTypecode) {
 }
 
 // 지도 적용 버튼 클릭 시 API 요청, 혹은 이미 저장된 데이터를 사용할건지 분기하는 함수 
-function judge(sgId, sgTypecode, sdName, placeType) {
+function judge(sgId, sdName, placeType) {
     
     // 버튼 클릭했을 때 로딩 안내 문구 띄우기
-    loadingInfoStart();
+    startLoadingInterval("map");
 
     if(votePlaces[0][sdName] === undefined)
-        placeApiRequest(sgId, sgTypecode, sdName);
+        placeApiRequest(sgId, sdName);
     else
         makePingOnMap(placeType, sdName);
 }
 
 
-function changeLoadingInfo() {
-    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+function changeLoadingInfo(type) {
+    const loadingInfoSpan = document.querySelector(".js-"+type+"LoadingInfo");
 
-    ++count;
-    if(count < 4)
+    ++loadingInterval[type].count;
+    if(loadingInterval[type].count < 4)
         loadingInfoSpan.innerText += ".";
     else {
-        count = 0;
+        loadingInterval[type].count = 0;
         loadingInfoSpan.innerText = loadingInfoSpan.innerText.slice(0, -3);
     }
 }
 
-function loadingInfoStart() {
-    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+function startLoadingInterval(type) {
+    const loadingInfoSpan = document.querySelector(".js-"+type+"LoadingInfo");
     
     console.log("로딩 인터벌 시작");
-    loadingInfoSpan.style.display = "block";
-    count = 0;
+    if(type === "map")
+        loadingInfoSpan.style.display = "block";
     
-    changeLoadingInfo();
-    loadingInterval = setInterval(changeLoadingInfo, 500);
+    loadingInterval[type].count = 0;
+    
+    changeLoadingInfo(type);
+    loadingInterval[type].interval = setInterval(() => {
+        changeLoadingInfo(type); 
+    }, 500);
 }
 
-function loadingInfoEnd() {
-    const loadingInfoSpan = document.querySelector(".js-loadingInfo");
+function endLoadingInterval(type) {
+    const loadingInfoSpan = document.querySelector(".js-"+type+"LoadingInfo");
 
     console.log("로딩 인터벌 종료");
 
-    clearInterval(loadingInterval);
-    loadingInterval = null;
-    loadingInfoSpan.innerText = "지도를 로딩하고 있습니다.";
+    clearInterval(loadingInterval[type].interval);
+    loadingInterval["map"].interval = null;
+    loadingInterval["map"].count = 0;
     loadingInfoSpan.style.display = "none";
+
+    if(type === "map")
+        loadingInfoSpan.innerText = "지도를 로딩하고 있습니다.";
 }
 
 function init() {
@@ -544,12 +560,16 @@ function init() {
     
     const sgId = parsedUrl[4];
     const sgTypecode = parsedUrl[5];
+    
 
-    // 투표소 정보 API 요청
+    // 선거 정보 API 요청
     sgApiRequest(sgId, sgTypecode, "서울특별시");
+    startLoadingInterval("sg");
 
     // 후보자 정보 API 요청
     candApiRequest(sgId, sgTypecode);
+    startLoadingInterval("cand");
+
 
     // 적용 버튼 리스너
     const applyBtn = document.querySelector(".js-applyBtn")
@@ -568,11 +588,8 @@ function init() {
             return;
 
         console.log("투표소 타입 = " + placeType + ", 지역 = ", sdName);
-        judge(sgId, sgTypecode, sdName, placeType);
+        judge(sgId, sdName, placeType);
     });
-
-    
-
 }
 
 init();
