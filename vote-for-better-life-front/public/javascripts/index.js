@@ -14,7 +14,7 @@ $(function() {
         sgTypes = ["보궐", "대통령", "국회의원", "시도지사", "구시군장", "시도의원", "구시군의회의원", "국회의원비례대표", "광역의원비례대표", "기초의원비례대표", "교육의원", "교육감", "전국동시지방"];
 
         const list = document.querySelector(".js-searchResults");
-        list.innerHTML = "";
+        // list.innerHTML = "";
 
         const ul = document.createElement("ul");
         list.append(ul);
@@ -118,18 +118,6 @@ $(function() {
         event.preventDefault();
 
 
-        // 이전 검색 결과 지우기
-        const ul = document.querySelector(".js-searchResults");
-        ul.children[0].innerHTML = "";
-
-        // loading dots 띄우기
-        const loadingDiv = document.querySelector(".js-loadingDots");
-        loadingDiv.style.display = "block";
-
-        flowDots();
-        loadingInterval = setInterval(flowDots, 400);
-
-
         // 검색 범주 확인
         const checkBoxes = document.getElementsByClassName("js-checkbox");
 
@@ -146,6 +134,19 @@ $(function() {
         if(searchRangeStat === 0)
             alert("하나 이상의 범주를 선택하세요");
         else {
+
+            // 이전 검색 결과 지우기
+            const ul = document.querySelector(".js-searchResults");
+            ul.children[0].innerHTML = "";
+
+            // loading dots 띄우기
+            const loadingDiv = document.querySelector(".js-loadingDots");
+            loadingDiv.style.display = "block";
+
+            flowDots();
+            loadingInterval = setInterval(flowDots, 400);
+
+
             const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/search?searchTerm="+searchTerm+"&searchRangeStat="+searchRangeStat;
             const type = "GET";
             $.ajax({
@@ -174,8 +175,6 @@ $(function() {
         // 검색 로직
         const form = document.querySelector(".js-searchForm");
         form.addEventListener("submit", onFormSubmitted);
-
-
     }
 
     init();

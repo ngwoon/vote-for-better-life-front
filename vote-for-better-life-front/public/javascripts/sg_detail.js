@@ -33,8 +33,7 @@ function makePingOnMap(placeType, sdName) {
         if(sdToMarkers[placeType][sdName] !== undefined) {
             markers = sdToMarkers[placeType][sdName].markers;
             bounds = sdToMarkers[placeType][sdName].bounds;
-        }
-        else {
+        } else {
             // 클러스터러 표현 위한 좌표 데이터 배열
             const data = {
                 "positions": [],
@@ -53,6 +52,8 @@ function makePingOnMap(placeType, sdName) {
                     }),
                 });
             }
+
+            console.log(data);
     
             markers = data.positions.map(function(position) {
                 
@@ -91,7 +92,7 @@ function makePingOnMap(placeType, sdName) {
     
         // 로딩 인터벌 종료
         if(loadingInterval["map"].interval !== null)
-            endLoadingInterval();
+            endLoadingInterval("map");
 
         resolve();
     });
@@ -367,7 +368,6 @@ function showCandNames() {
         let table = document.createElement("table");
         let tr = document.createElement("tr");
         for(let candidator of candidators[jdName]){
-            console.log("후보자명 = ", candidator.NAME);
 
             const td = document.createElement("td");
             const cNameSpan = document.createElement("span");
@@ -430,7 +430,7 @@ function placeApiRequest(sgId, sdName) {
                 votePlaces[1][sdName] = body.item.preVotePlaces;
                 makePingOnMap(0, sdName)
                     .then(() => {console.log("지도 로딩 완료");})
-                    .catch((error) => {console.log("지도 로딩 실패"); goHome();});
+                    .catch((error) => { alert("지도 로딩 실패"); console.log(error); goHome();});
             } else {
                 alert("투표소 정보를 불러오는데 실패했습니다.");
                 goHome();
@@ -550,8 +550,8 @@ function endLoadingInterval(type) {
     console.log("로딩 인터벌 종료");
 
     clearInterval(loadingInterval[type].interval);
-    loadingInterval["map"].interval = null;
-    loadingInterval["map"].count = 0;
+    loadingInterval[type].interval = null;
+    loadingInterval[type].count = 0;
     loadingInfoSpan.style.display = "none";
 
     if(type === "map")
@@ -559,6 +559,12 @@ function endLoadingInterval(type) {
 }
 
 function init() {
+
+    // 제목에 메인 페이지 링크 달기
+    const title = document.querySelector(".js-title");
+    title.addEventListener("click", goHome);
+
+
     const container = document.getElementsByClassName('map')[0]; //지도를 담을 영역의 DOM 레퍼런스
     const options = { //지도를 생성할 때 필요한 기본 옵션
         center: new kakao.maps.LatLng(37.5642135, 127.0016985), //지도의 중심좌표.
@@ -581,7 +587,7 @@ function init() {
     
 
     // 선거 정보 API 요청
-    sgApiRequest(sgId, sgTypecode, "서울특별시");
+    sgApiRequest(sgId, sgTypecode);
     startLoadingInterval("sg");
 
     // 후보자 정보 API 요청
@@ -600,10 +606,14 @@ function init() {
         const sdName = sdNames[areaSBox.value];
         const placeType = placeTypeSBox.value;
 
-        if(currentPlaceType === placeType && currentSdName === sdName)
+        if(currentPlaceType === placeType && currentSdName === sdName) {
+            alert("이미 출력되어 있는 정보입니다.")
             return;
-        if(loadingInterval !== null)
+        }
+        if(loadingInterval["map"].interval !== null) {
+            alert("로딩이 완료될 때까지 기다려 주시기 바랍니다.")
             return;
+        }
 
         console.log("투표소 타입 = " + placeType + ", 지역 = ", sdName);
         judge(sgId, sdName, placeType);
