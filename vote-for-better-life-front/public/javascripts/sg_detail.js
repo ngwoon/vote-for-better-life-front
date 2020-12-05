@@ -414,7 +414,7 @@ function goHome() {
     location.href = "/";
 }
 
-function placeApiRequest(sgId, sdName) {
+function placeApiRequest(sgId, sdName, placeType) {
 
     const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/deploy/vote-places/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sdName);
     const type = "GET";
@@ -428,7 +428,7 @@ function placeApiRequest(sgId, sdName) {
             if(body.resultCode === "00") {
                 votePlaces[0][sdName] = body.item.votePlaces;
                 votePlaces[1][sdName] = body.item.preVotePlaces;
-                makePingOnMap(0, sdName)
+                makePingOnMap(placeType, sdName)
                     .then(() => {console.log("지도 로딩 완료");})
                     .catch((error) => { alert("지도 로딩 실패"); console.log(error); goHome();});
             } else {
@@ -511,7 +511,7 @@ function judge(sgId, sdName, placeType) {
     startLoadingInterval("map");
 
     if(votePlaces[0][sdName] === undefined)
-        placeApiRequest(sgId, sdName);
+        placeApiRequest(sgId, sdName, placeType);
     else
         makePingOnMap(placeType, sdName);
 }
