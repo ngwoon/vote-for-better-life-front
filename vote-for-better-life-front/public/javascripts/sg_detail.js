@@ -406,6 +406,14 @@ function showCandNames() {
     console.log("후보자 정보 화면띄우기 종료");
 }
 
+
+
+
+
+function goHome() {
+    location.href = "/";
+}
+
 function placeApiRequest(sgId, sdName) {
 
     const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/deploy/vote-places/"+encodeURIComponent(sgId)+"/"+encodeURIComponent(sdName);
@@ -422,15 +430,17 @@ function placeApiRequest(sgId, sdName) {
                 votePlaces[1][sdName] = body.item.preVotePlaces;
                 makePingOnMap(0, sdName)
                     .then(() => {console.log("지도 로딩 완료");})
-                    .catch((error) => {console.log("지도 로딩 실패");});
+                    .catch((error) => {console.log("지도 로딩 실패"); goHome();});
             } else {
                 alert("투표소 정보를 불러오는데 실패했습니다.");
+                goHome();
             }
         },
         error: (xhr, status, error) => {
             alert("비동기 요청 실패 : place");
             alert(status);
             console.log(error);
+            goHome();
         },
     });
 }
@@ -445,18 +455,24 @@ function sgApiRequest(sgId, sgTypecode) {
         url,
         type,
         dataType: "json",
-        success: async (data) => {
+        success: (data) => {
             const body = JSON.parse(data.body);
             if(body.resultCode === "00") {
+                if(body.item.sgInfo.length === 0) {
+                    alert("존재하지 않는 선거입니다.");
+                    goHome();
+                }
                 showSgInfo(body.item.sgInfo[0]);
             } else {
                 alert("선거 정보를 불러오는데 실패했습니다.");
+                goHome();
             }
         },
         error: (xhr, status, error) => {
             alert("비동기 요청 실패 : sg");
             alert(status);
             console.log(error);
+            goHome();
         },
     });
 }
@@ -476,12 +492,14 @@ function candApiRequest(sgId, sgTypecode) {
                 showCandNames();
             } else {
                 alert("후보자 정보를 불러오는데 실패했습니다.");
+                goHome();
             }
         },
         error: (xhr, status, error) => {
             alert("비동기 요청 실패 : cand");
             alert(status);
             console.log(error);
+            goHome();
         },
     });
 }
