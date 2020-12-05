@@ -9,7 +9,7 @@ let loadingInterval = {
     map: {interval: null, count: 0},
     cand: {interval: null, count: 0},
 };
-let currentPlaceType = 0, currentSdName = "서울특별시";
+let currentPlaceType = -1, currentSdName = "undefined";
 
 let candidators = {};
 
