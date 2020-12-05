@@ -1,5 +1,10 @@
 
 $(function() {
+
+    let dotIdx = 0;
+    let loadingInterval = null;
+
+
     // 검색 결과 화면에 출력
     function showResults(data) {
 
@@ -90,11 +95,42 @@ $(function() {
                 }
             });
         }
+
+        // loading dots 제거
+        clearInterval(loadingInterval);
+        const loadingDiv = document.querySelector(".js-loadingDots");
+        loadingDiv.style.display = "none";
+        loadingDiv.childNodes[dotIdx].classList.remove("highlightedDot");
+        dotIdx = 0;
+        loadingInterval = null;
+    }
+
+    function flowDots() {
+        const pIdx = dotIdx;
+        dotIdx = (dotIdx + 1) % 3;
+
+        const loadingDiv = document.querySelector(".js-loadingDots");
+        loadingDiv.children[pIdx].classList.remove("highlightedDot");
+        loadingDiv.children[dotIdx].classList.add("highlightedDot");
     }
 
     function onFormSubmitted(event) {
         event.preventDefault();
 
+
+        // 이전 검색 결과 지우기
+        const ul = document.querySelector(".js-searchResults");
+        ul.children[0].innerHTML = "";
+
+        // loading dots 띄우기
+        const loadingDiv = document.querySelector(".js-loadingDots");
+        loadingDiv.style.display = "block";
+
+        flowDots();
+        loadingInterval = setInterval(flowDots, 400);
+
+
+        // 검색 범주 확인
         const checkBoxes = document.getElementsByClassName("js-checkbox");
 
         let searchRangeStat = 0;
