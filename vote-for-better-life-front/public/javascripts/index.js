@@ -137,7 +137,7 @@ $(function() {
 
             // 이전 검색 결과 지우기
             const ul = document.querySelector(".js-searchResults");
-            ul.children[0].innerHTML = "";
+            ul.innerHTML = "";
 
             // loading dots 띄우기
             const loadingDiv = document.querySelector(".js-loadingDots");
@@ -145,7 +145,6 @@ $(function() {
 
             flowDots();
             loadingInterval = setInterval(flowDots, 400);
-
 
             const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/deploy/search?searchTerm="+searchTerm+"&searchRangeStat="+searchRangeStat;
             const type = "GET";
