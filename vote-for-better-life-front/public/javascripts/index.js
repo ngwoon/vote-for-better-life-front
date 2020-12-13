@@ -147,7 +147,7 @@ $(function() {
             loadingInterval = setInterval(flowDots, 400);
 
 
-            const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/link-test2/search?searchTerm="+searchTerm+"&searchRangeStat="+searchRangeStat;
+            const url = "https://5zzizo8bif.execute-api.us-east-1.amazonaws.com/deploy/search?searchTerm="+searchTerm+"&searchRangeStat="+searchRangeStat;
             const type = "GET";
             $.ajax({
                 url,
@@ -157,7 +157,8 @@ $(function() {
                     const body = JSON.parse(data.body);
 
                     if(body.resultCode === "00") {
-                        showResults(body.item);
+                        console.log(body);
+                        showResults(body.item.result);
                     } else {
                         alert("서버의 에러 응답");
                     }
